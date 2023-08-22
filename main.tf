@@ -65,10 +65,22 @@ resource "aws_ecr_lifecycle_policy" "this" {
     "rules": [
         {
             "rulePriority": 1,
+            "description": "Remove untagged images older than 14 days",
+            "selection": {
+                "tagStatus": "untagged",
+                "countType": "sinceImagePushed",
+                "countUnit": "days",
+                "countNumber": ${var.remove_untagged_images_after}
+            },
+            "action": {
+                "type": "expire"
+            }
+        },
+        {
+            "rulePriority": 2,
             "description": "Keep last ${var.keep_last_images} images",
             "selection": {
-                "tagStatus": "tagged",
-                "tagPrefixList": ["v"],
+                "tagStatus": "any",
                 "countType": "imageCountMoreThan",
                 "countNumber": ${var.keep_last_images}
             },

@@ -30,6 +30,12 @@ variable "keep_last_images" {
   description = "Restrict the number of images to the latest x"
 }
 
+variable "remove_untagged_images_after" {
+  type        = number
+  default     = 14
+  description = "Removes all untagged images that are older than the given value in days"
+}
+
 variable "image_tag_mutability" {
   type    = bool
   default = false
