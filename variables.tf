@@ -13,15 +13,15 @@ variable "write_principal_arns" {
   description = "ARNs of principals (e.g. automation user) that will be granted write access in order to push new images"
 }
 
+variable "kms_key_arn" {
+  type        = string
+  description = "ARN of KMS key that will be used to encrypt images"
+}
+
 variable "scan_on_push" {
   type        = bool
   description = "Scan images on push"
   default     = true
-}
-
-variable "kms_key_arn" {
-  type        = string
-  description = "ARN of KMS key that will be used to encrypt images"
 }
 
 variable "keep_last_images" {
@@ -37,6 +37,7 @@ variable "remove_untagged_images_after" {
 }
 
 variable "image_tag_mutability" {
-  type    = bool
-  default = false
+  type        = bool
+  default     = false
+  description = "Allows an image tag to be updated"
 }
