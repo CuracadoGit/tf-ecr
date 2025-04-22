@@ -41,3 +41,9 @@ variable "image_tag_mutability" {
   default     = false
   description = "Allows an image tag to be updated"
 }
+
+variable "never_expire_tags" {
+  type        = list(string)
+  description = "A list of tags that will never be expired. The `latest` tag will never be expired."
+  default     = ["dev", "approval", "live"]
+}

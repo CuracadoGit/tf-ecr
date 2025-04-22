@@ -21,16 +21,17 @@ module "ecr" {
 ```
 
 ## Inputs
-| Name                         | Description                                                                                             | Type           | Default | Required |
-|------------------------------|---------------------------------------------------------------------------------------------------------|----------------|---------|:--------:|
-| name                         | The name for the ECR                                                                                    | `string`       | n/a     |   yes    |
-| read_principal_arns          | ARNs of principals (e.g. a task execution role) that will be granted permission to read from the ECR    | `list(string)` | n/a     |   yes    |
-| write_principal_arns         | ARNs of principals (e.g. automation user) that will be granted write access in order to push new images | `list(string)` | n/a     |   yes    |
-| kms_key_arn                  | ARN of KMS key that will be used to encrypt images                                                      | `string`       | n/a     |   yes    |
-| scan_on_push                 | Scan images on push                                                                                     | `bool`         | `true`  |    no    |
-| keep_last_images             | Restrict the number of images to the latest x                                                           | `number`       | `10`    |    no    |
-| remove_untagged_images_after | Removes all untagged images that are older than the given value in days                                 | `number`       | 14      |    no    |
-| image_tag_mutability         | Allows an image tag to be updated                                                                       | `bool`         | `false` |    no    |
+| Name                         | Description                                                                                             | Type           | Default                       | Required |
+|------------------------------|---------------------------------------------------------------------------------------------------------|----------------|-------------------------------|:--------:|
+| name                         | The name for the ECR                                                                                    | `string`       | n/a                           |   yes    |
+| read_principal_arns          | ARNs of principals (e.g. a task execution role) that will be granted permission to read from the ECR    | `list(string)` | n/a                           |   yes    |
+| write_principal_arns         | ARNs of principals (e.g. automation user) that will be granted write access in order to push new images | `list(string)` | n/a                           |   yes    |
+| kms_key_arn                  | ARN of KMS key that will be used to encrypt images                                                      | `string`       | n/a                           |   yes    |
+| scan_on_push                 | Scan images on push                                                                                     | `bool`         | `true`                        |    no    |
+| keep_last_images             | Restrict the number of images to the latest x                                                           | `number`       | `10`                          |    no    |
+| remove_untagged_images_after | Removes all untagged images that are older than the given value in days                                 | `number`       | 14                            |    no    |
+| image_tag_mutability         | Allows an image tag to be updated                                                                       | `bool`         | `false`                       |    no    |
+| never_expire_tags            | A list of tags that will never be expired. The `latest` tag will never be expired.                      | `list(string)` | `["dev", "approval", "live"]` |    no    |
 
 ## Outputs
 

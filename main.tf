@@ -60,35 +60,62 @@ resource "aws_ecr_repository_policy" "this" {
 resource "aws_ecr_lifecycle_policy" "this" {
   repository = aws_ecr_repository.this.name
 
-  policy = <<EOF
-{
-    "rules": [
+  policy = jsonencode({
+    "rules" : concat(
+      [
         {
-            "rulePriority": 1,
-            "description": "Remove untagged images older than 14 days",
-            "selection": {
-                "tagStatus": "untagged",
-                "countType": "sinceImagePushed",
-                "countUnit": "days",
-                "countNumber": ${var.remove_untagged_images_after}
-            },
-            "action": {
-                "type": "expire"
-            }
+          rulePriority : 100,
+          description : "Remove untagged images older than 14 days",
+          selection : {
+            tagStatus : "untagged",
+            countType : "sinceImagePushed",
+            countUnit : "days",
+            countNumber : var.remove_untagged_images_after
+          },
+          action : {
+            type : "expire"
+          }
         },
         {
-            "rulePriority": 2,
-            "description": "Keep last ${var.keep_last_images} images",
-            "selection": {
-                "tagStatus": "any",
-                "countType": "imageCountMoreThan",
-                "countNumber": ${var.keep_last_images}
-            },
-            "action": {
-                "type": "expire"
-            }
+          rulePriority : 200,
+          description : "Keep last ${var.keep_last_images} images",
+          selection : {
+            tagStatus : "any",
+            countType : "imageCountMoreThan",
+            countNumber : var.keep_last_images
+          },
+          action : {
+            type : "expire"
+          }
         }
-    ]
-}
-EOF
+      ],
+
+      # add a rule for each tag that prevents images from being deleted.
+      # these rules have a high priority and will be matched against images first.
+      # once an image was matched by a rule, no following rule is evaluated against it.
+      # this means that all images matched by this rule block will be exempt from all following rules.
+      [
+        for pos, tag in concat(["latest"], var.never_expire_tags) : {
+          rulePriority : 10 + pos,
+          description : "preserve images with tag `${tag}`",
+          # select all images ...
+          selection : {
+            # ... that are tagged ...
+            tagStatus : "tagged",
+            # ... with this specific tag ...
+            tagPrefixList : [tag],
+            # ... and if there are more than ...
+            countType : "imageCountMoreThan",
+            # ... this huge number (spoiler: there aren't) ...
+            countNumber : 999999
+          },
+          action : {
+            # ... delete the oldest ones.
+            type : "expire"
+          }
+        }
+      ]
+    ),
+  })
+
 }
